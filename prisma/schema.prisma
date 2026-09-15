@@ -1,0 +1,84 @@
+// use prisma-8
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  username  String  @unique
+  role      Role     @default(USER)
+  bookmarks Bookmark[]
+  readingProgress ReadingProgress[]
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+
+  @map("user")
+}
+
+model Folder {
+  id             Int      @id @default(autoincrement())
+  name           String
+  parentFolderId Int?
+
+  //this is for self-referential relationship
+  parent   Folder?  @relation("FolderHierarchy", fields: [parentFolderId], references: [id])
+  children Folder[] @relation("FolderHierarchy")
+
+  notes Note[]
+
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+
+  @@map("folder")
+}
+
+model Note {
+  id          Int       @id @default(autoincrement())
+  title       String
+  slug        String    @unique
+  content     String
+  folderId    Int?
+  bookmarks Bookmark[]
+  readingProgress ReadingProgress[]
+  publishedAt TimestamptzString?
+  createdAt   TimestamptzString @default(now())
+  updatedAt   temporal.updatedAtString()
+
+  folder Folder? @relation(fields: [folderId], references: [id])
+
+  @@map("note")
+}
+
+model Bookmark {
+  userId Int
+  noteId Int
+  createdAt TimestamptzString @default(now())
+
+  user   User   @relation(fields: [userId], references: [id])
+  note   Note   @relation(fields: [noteId], references: [id])
+
+  //primary key (userId, noteId)
+  @@id([userId, noteId])
+
+  @@map("bookmark")
+}
+model ReadingProgress {
+  userId Int
+  noteId Int
+  sectionName String?
+  progress Int
+  scrollPosition Int?
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+
+  user   User   @relation(fields: [userId], references: [id])
+  note   Note   @relation(fields: [noteId], references: [id])
+
+  //primary key (userId, noteId)
+  @@id([userId, noteId])
+
+  @@map("reading_progress")
+}
+
+enum Role {
+  USER // default
+  ADMIN
+}

@@ -1,0 +1,826 @@
+[
+  {
+    "id": "schema.public",
+    "label": "Create schema \"public\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres"
+    },
+    "precheck": [],
+    "execute": [
+      {
+        "description": "Create schema \"public\"",
+        "sql": "CREATE SCHEMA IF NOT EXISTS \"public\"",
+        "params": []
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "table.bookmark",
+    "label": "Create table \"bookmark\"",
+    "summary": "Creates table \"bookmark\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "bookmark"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"bookmark\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"bookmark\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"bookmark\"",
+        "sql": "CREATE TABLE \"public\".\"bookmark\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"noteId\" int4 NOT NULL,\n  \"userId\" int4 NOT NULL,\n  PRIMARY KEY (\"userId\", \"noteId\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"bookmark\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"bookmark\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.folder",
+    "label": "Create table \"folder\"",
+    "summary": "Creates table \"folder\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "folder"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"folder\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"folder\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"folder\"",
+        "sql": "CREATE TABLE \"public\".\"folder\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"name\" text NOT NULL,\n  \"parentFolderId\" int4,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"folder\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"folder\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.note",
+    "label": "Create table \"note\"",
+    "summary": "Creates table \"note\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "note"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"note\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"note\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"note\"",
+        "sql": "CREATE TABLE \"public\".\"note\" (\n  \"content\" text NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"folderId\" int4,\n  \"id\" SERIAL NOT NULL,\n  \"publishedAt\" timestamptz,\n  \"slug\" text NOT NULL,\n  \"title\" text NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"note\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"note\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.reading_progress",
+    "label": "Create table \"reading_progress\"",
+    "summary": "Creates table \"reading_progress\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "reading_progress"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"reading_progress\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"reading_progress\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"reading_progress\"",
+        "sql": "CREATE TABLE \"public\".\"reading_progress\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"noteId\" int4 NOT NULL,\n  \"progress\" int4 NOT NULL,\n  \"scrollPosition\" int4,\n  \"sectionName\" text,\n  \"updatedAt\" timestamptz NOT NULL,\n  \"userId\" int4 NOT NULL,\n  PRIMARY KEY (\"userId\", \"noteId\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"reading_progress\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"reading_progress\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.user",
+    "label": "Create table \"user\"",
+    "summary": "Creates table \"user\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "user"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"user\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"user\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"user\"",
+        "sql": "CREATE TABLE \"public\".\"user\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"email\" text NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"role\" text DEFAULT 'USER' NOT NULL,\n  \"user\" timestamptz NOT NULL,\n  \"username\" text NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"user_role_check_1954e8c0\" CHECK (\"role\" IN ('USER', 'ADMIN'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"user\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"user\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.note.note_slug_key",
+    "label": "Add unique constraint on \"note\" (slug)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "note_slug_key",
+        "table": "note"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"note_slug_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "note_slug_key",
+          "public",
+          "\"public\".\"note\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"note_slug_key\"",
+        "sql": "ALTER TABLE \"public\".\"note\" ADD CONSTRAINT \"note_slug_key\" UNIQUE (\"slug\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"note_slug_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "note_slug_key",
+          "public",
+          "\"public\".\"note\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.user.user_email_key",
+    "label": "Add unique constraint on \"user\" (email)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "user_email_key",
+        "table": "user"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"user_email_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "user_email_key",
+          "public",
+          "\"public\".\"user\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"user_email_key\"",
+        "sql": "ALTER TABLE \"public\".\"user\" ADD CONSTRAINT \"user_email_key\" UNIQUE (\"email\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"user_email_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "user_email_key",
+          "public",
+          "\"public\".\"user\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.user.user_username_key",
+    "label": "Add unique constraint on \"user\" (username)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "user_username_key",
+        "table": "user"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"user_username_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "user_username_key",
+          "public",
+          "\"public\".\"user\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"user_username_key\"",
+        "sql": "ALTER TABLE \"public\".\"user\" ADD CONSTRAINT \"user_username_key\" UNIQUE (\"username\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"user_username_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "user_username_key",
+          "public",
+          "\"public\".\"user\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.bookmark.bookmark_noteId_idx_0612c5b1",
+    "label": "Create index \"bookmark_noteId_idx_0612c5b1\" on \"bookmark\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "bookmark_noteId_idx_0612c5b1",
+        "table": "bookmark"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"bookmark_noteId_idx_0612c5b1\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"bookmark_noteId_idx_0612c5b1\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"bookmark_noteId_idx_0612c5b1\"",
+        "sql": "CREATE INDEX \"bookmark_noteId_idx_0612c5b1\" ON \"public\".\"bookmark\" (\"noteId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"bookmark_noteId_idx_0612c5b1\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"bookmark_noteId_idx_0612c5b1\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.bookmark.bookmark_userId_idx_a489d58a",
+    "label": "Create index \"bookmark_userId_idx_a489d58a\" on \"bookmark\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "bookmark_userId_idx_a489d58a",
+        "table": "bookmark"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"bookmark_userId_idx_a489d58a\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"bookmark_userId_idx_a489d58a\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"bookmark_userId_idx_a489d58a\"",
+        "sql": "CREATE INDEX \"bookmark_userId_idx_a489d58a\" ON \"public\".\"bookmark\" (\"userId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"bookmark_userId_idx_a489d58a\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"bookmark_userId_idx_a489d58a\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.folder.folder_parentFolderId_idx_66fef1f5",
+    "label": "Create index \"folder_parentFolderId_idx_66fef1f5\" on \"folder\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "folder_parentFolderId_idx_66fef1f5",
+        "table": "folder"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"folder_parentFolderId_idx_66fef1f5\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"folder_parentFolderId_idx_66fef1f5\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"folder_parentFolderId_idx_66fef1f5\"",
+        "sql": "CREATE INDEX \"folder_parentFolderId_idx_66fef1f5\" ON \"public\".\"folder\" (\"parentFolderId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"folder_parentFolderId_idx_66fef1f5\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"folder_parentFolderId_idx_66fef1f5\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.note.note_folderId_idx_5985e562",
+    "label": "Create index \"note_folderId_idx_5985e562\" on \"note\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "note_folderId_idx_5985e562",
+        "table": "note"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"note_folderId_idx_5985e562\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"note_folderId_idx_5985e562\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"note_folderId_idx_5985e562\"",
+        "sql": "CREATE INDEX \"note_folderId_idx_5985e562\" ON \"public\".\"note\" (\"folderId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"note_folderId_idx_5985e562\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"note_folderId_idx_5985e562\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.reading_progress.reading_progress_noteId_idx_0612c5b1",
+    "label": "Create index \"reading_progress_noteId_idx_0612c5b1\" on \"reading_progress\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "reading_progress_noteId_idx_0612c5b1",
+        "table": "reading_progress"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"reading_progress_noteId_idx_0612c5b1\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"reading_progress_noteId_idx_0612c5b1\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"reading_progress_noteId_idx_0612c5b1\"",
+        "sql": "CREATE INDEX \"reading_progress_noteId_idx_0612c5b1\" ON \"public\".\"reading_progress\" (\"noteId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"reading_progress_noteId_idx_0612c5b1\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"reading_progress_noteId_idx_0612c5b1\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.reading_progress.reading_progress_userId_idx_a489d58a",
+    "label": "Create index \"reading_progress_userId_idx_a489d58a\" on \"reading_progress\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "reading_progress_userId_idx_a489d58a",
+        "table": "reading_progress"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"reading_progress_userId_idx_a489d58a\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"reading_progress_userId_idx_a489d58a\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"reading_progress_userId_idx_a489d58a\"",
+        "sql": "CREATE INDEX \"reading_progress_userId_idx_a489d58a\" ON \"public\".\"reading_progress\" (\"userId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"reading_progress_userId_idx_a489d58a\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"reading_progress_userId_idx_a489d58a\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.bookmark.bookmark_userId_fkey",
+    "label": "Add foreign key \"bookmark_userId_fkey\" on \"bookmark\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "bookmark_userId_fkey",
+        "table": "bookmark"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"bookmark_userId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "bookmark_userId_fkey",
+          "public",
+          "\"public\".\"bookmark\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"bookmark_userId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"bookmark\"\nADD CONSTRAINT \"bookmark_userId_fkey\"\nFOREIGN KEY (\"userId\")\nREFERENCES \"public\".\"user\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"bookmark_userId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "bookmark_userId_fkey",
+          "public",
+          "\"public\".\"bookmark\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.bookmark.bookmark_noteId_fkey",
+    "label": "Add foreign key \"bookmark_noteId_fkey\" on \"bookmark\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "bookmark_noteId_fkey",
+        "table": "bookmark"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"bookmark_noteId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "bookmark_noteId_fkey",
+          "public",
+          "\"public\".\"bookmark\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"bookmark_noteId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"bookmark\"\nADD CONSTRAINT \"bookmark_noteId_fkey\"\nFOREIGN KEY (\"noteId\")\nREFERENCES \"public\".\"note\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"bookmark_noteId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "bookmark_noteId_fkey",
+          "public",
+          "\"public\".\"bookmark\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.folder.folder_parentFolderId_fkey",
+    "label": "Add foreign key \"folder_parentFolderId_fkey\" on \"folder\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "folder_parentFolderId_fkey",
+        "table": "folder"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"folder_parentFolderId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "folder_parentFolderId_fkey",
+          "public",
+          "\"public\".\"folder\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"folder_parentFolderId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"folder\"\nADD CONSTRAINT \"folder_parentFolderId_fkey\"\nFOREIGN KEY (\"parentFolderId\")\nREFERENCES \"public\".\"folder\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"folder_parentFolderId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "folder_parentFolderId_fkey",
+          "public",
+          "\"public\".\"folder\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.note.note_folderId_fkey",
+    "label": "Add foreign key \"note_folderId_fkey\" on \"note\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "note_folderId_fkey",
+        "table": "note"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"note_folderId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "note_folderId_fkey",
+          "public",
+          "\"public\".\"note\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"note_folderId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"note\"\nADD CONSTRAINT \"note_folderId_fkey\"\nFOREIGN KEY (\"folderId\")\nREFERENCES \"public\".\"folder\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"note_folderId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "note_folderId_fkey",
+          "public",
+          "\"public\".\"note\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.reading_progress.reading_progress_userId_fkey",
+    "label": "Add foreign key \"reading_progress_userId_fkey\" on \"reading_progress\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "reading_progress_userId_fkey",
+        "table": "reading_progress"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"reading_progress_userId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "reading_progress_userId_fkey",
+          "public",
+          "\"public\".\"reading_progress\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"reading_progress_userId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"reading_progress\"\nADD CONSTRAINT \"reading_progress_userId_fkey\"\nFOREIGN KEY (\"userId\")\nREFERENCES \"public\".\"user\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"reading_progress_userId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "reading_progress_userId_fkey",
+          "public",
+          "\"public\".\"reading_progress\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.reading_progress.reading_progress_noteId_fkey",
+    "label": "Add foreign key \"reading_progress_noteId_fkey\" on \"reading_progress\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "reading_progress_noteId_fkey",
+        "table": "reading_progress"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"reading_progress_noteId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "reading_progress_noteId_fkey",
+          "public",
+          "\"public\".\"reading_progress\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"reading_progress_noteId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"reading_progress\"\nADD CONSTRAINT \"reading_progress_noteId_fkey\"\nFOREIGN KEY (\"noteId\")\nREFERENCES \"public\".\"note\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"reading_progress_noteId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "reading_progress_noteId_fkey",
+          "public",
+          "\"public\".\"reading_progress\""
+        ]
+      }
+    ]
+  }
+]
