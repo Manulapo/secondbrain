@@ -22,6 +22,7 @@ model Folder {
   parent   Folder?  @relation("FolderHierarchy", fields: [parentFolderId], references: [id])
   children Folder[] @relation("FolderHierarchy")
 
+  slug        String    @unique
   notes Note[]
 
   createdAt TimestamptzString @default(now())

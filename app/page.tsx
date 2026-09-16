@@ -1,22 +1,22 @@
 import { db } from "@/lib/db";
+import Link from "next/link";
 
 export default async function Home() {
-
- const folders = await db.orm.public.Folder
-  .where((folder) =>
-    folder.notes.some((note) => note.publishedAt.isNull())
-  ).include("notes", (notes) =>
-  notes.where((note) => note.publishedAt.isNull())
-    .select("title", "createdAt", "id")
-    .orderBy(note => note.createdAt.desc())
-    .limit(3)
+  const folders = await db.orm.public.Folder.where((folder) =>
+    folder.notes.some((note) => note.publishedAt.isNull()),
   )
-  .all();
+    .include("notes", (notes) =>
+      notes
+        .where((note) => note.publishedAt.isNull())
+        .select("title", "createdAt", "id", "slug")
+        .orderBy((note) => note.createdAt.desc())
+        .limit(3),
+    )
+    .all();
 
-  const totalNotesNumber = await db.orm.public.Note
-    .groupBy("folderId")
+  const totalNotesNumber = await db.orm.public.Note.groupBy("folderId")
     .having((group) => group.count().gte(1))
-    .aggregate(agg => ({total: agg.count(), oldest: agg.min("createdAt")}));
+    .aggregate((agg) => ({ total: agg.count(), oldest: agg.min("createdAt") }));
 
   if (folders.length === 0) {
     return <div>No folders found</div>;
@@ -33,10 +33,11 @@ export default async function Home() {
           <p>{folder.createdAt}</p>
           {folder.notes.map((note) => (
             <div className="ml-2" key={note.id}>
-              <h2 > - {note.title}</h2>
+              <h2> - {note.title}</h2>
+              <Link href={`/notes/${note.slug}`}> go to note</Link>
               <div>{note.createdAt}</div>
             </div>
-          ))} 
+          ))}
         </div>
       ))}
     </main>

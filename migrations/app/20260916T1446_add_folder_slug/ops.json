@@ -1,0 +1,163 @@
+[
+  {
+    "id": "column.public.folder.slug",
+    "label": "Add column \"slug\" to \"folder\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "slug",
+        "table": "folder"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"slug\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "folder",
+          "slug"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"slug\"",
+        "sql": "ALTER TABLE \"public\".\"folder\" ADD COLUMN \"slug\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"slug\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "folder",
+          "slug"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "data_migration.backfill-folder-slug",
+    "label": "Data transform: backfill-folder-slug",
+    "operationClass": "data",
+    "target": {
+      "id": "postgres"
+    },
+    "precheck": [
+      {
+        "description": "Check backfill-folder-slug has work to do",
+        "sql": "SELECT EXISTS (SELECT \"id\" AS \"id\" FROM \"public\".\"folder\" WHERE \"slug\" IS NULL LIMIT 1) AS ok",
+        "params": []
+      }
+    ],
+    "execute": [
+      {
+        "description": "Run backfill-folder-slug",
+        "sql": "UPDATE \"public\".\"folder\" SET \"slug\" = \n                LOWER(\n                  REGEXP_REPLACE(\n                    TRIM(\"name\"),\n                    '[^a-zA-Z0-9]+',\n                    '-',\n                    'g'\n                  )\n                )\n              , \"updatedAt\" = CURRENT_TIMESTAMP WHERE \"slug\" IS NULL",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "Verify backfill-folder-slug resolved all violations",
+        "sql": "SELECT NOT EXISTS (SELECT \"id\" AS \"id\" FROM \"public\".\"folder\" WHERE \"slug\" IS NULL LIMIT 1) AS ok",
+        "params": []
+      }
+    ]
+  },
+  {
+    "id": "alterNullability.setNotNull.folder.slug",
+    "label": "Set NOT NULL on \"folder\".\"slug\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "slug",
+        "table": "folder"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"slug\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "folder",
+          "slug"
+        ]
+      },
+      {
+        "description": "ensure no NULL values in \"slug\"",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"public\".\"folder\" WHERE \"slug\" IS NULL) AS \"result\"",
+        "params": []
+      }
+    ],
+    "execute": [
+      {
+        "description": "set NOT NULL on \"slug\"",
+        "sql": "ALTER TABLE \"public\".\"folder\" ALTER COLUMN \"slug\" SET NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"slug\" is NOT NULL",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3 AND \"is_nullable\" = $4)) AS \"result\"",
+        "params": [
+          "public",
+          "folder",
+          "slug",
+          "NO"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.folder.folder_slug_key",
+    "label": "Add unique constraint on \"folder\" (slug)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "folder_slug_key",
+        "table": "folder"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"folder_slug_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "folder_slug_key",
+          "public",
+          "\"public\".\"folder\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"folder_slug_key\"",
+        "sql": "ALTER TABLE \"public\".\"folder\" ADD CONSTRAINT \"folder_slug_key\" UNIQUE (\"slug\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"folder_slug_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "folder_slug_key",
+          "public",
+          "\"public\".\"folder\""
+        ]
+      }
+    ]
+  }
+]

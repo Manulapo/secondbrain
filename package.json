@@ -7,7 +7,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "lint": "eslint",
+    "lint:fix": "eslint --fix",
     "db:tunnel": "ssh -N -T -o ExitOnForwardFailure=yes -L 5433:127.0.0.1:5432 surface",
     "dev:with-db": "concurrently --kill-others --names tunnel,next \"npm run db:tunnel\" \"wait-on tcp:5433 && next dev\"",
     "contract:emit": "prisma contract emit"
