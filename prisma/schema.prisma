@@ -3,14 +3,66 @@
 model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
-  username  String  @unique
+  username  String   @unique         //betterAuth "name"
   role      Role     @default(USER)
   bookmarks Bookmark[]
   readingProgress ReadingProgress[]
+  emailVerified Boolean @default(false) //betterAuth "email_verified"
+  image String? //betterAuth "image"
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+  sessions Session[]
+
+  @@map("user")
+}
+
+model Session {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  userId    Int
+  expiresAt TimestamptzString
   createdAt TimestamptzString @default(now())
   updatedAt temporal.updatedAtString()
 
-  @map("user")
+  ipAddress String? //needed by betterAuth
+  userAgent String? // needed by betterAuth
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("session")
+}
+
+model Account {
+  id Int @id @default(autoincrement())
+  userId Int // application user id
+  accountId  String //betterAuth "account_id" identity known by the provider 
+  providerId String //betterAuth "provider_id" like "credential" or "google"
+  password String?
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+
+  // needed by betterAuth
+  accessToken           String?
+  refreshToken          String? 
+  accessTokenExpiresAt  TimestamptzString?
+  refreshTokenExpiresAt TimestamptzString?
+  scope                 String?
+  idToken               String?
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("account")
+}
+
+model Verification {
+  id Int @id @default(autoincrement())
+  identifier String // telling the provider which user to verify "verify-email:user@example.com"
+  value String // temporary verification token 
+  expiresAt TimestamptzString // when the temporary verification token expires
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+
+  @@map("verification")
 }
 
 model Folder {
@@ -23,6 +75,7 @@ model Folder {
   children Folder[] @relation("FolderHierarchy")
 
   slug        String    @unique
+  publishedAt TimestamptzString?
   notes Note[]
 
   createdAt TimestamptzString @default(now())
