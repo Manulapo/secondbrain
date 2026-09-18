@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { db } from "@/lib/db";
+import { getNoteBySlug } from "@/lib/notes/queries";
 import { notFound } from "next/navigation";
 
 export default async function NotePage({
@@ -10,11 +10,7 @@ export default async function NotePage({
 }) {
   const { slug } = await params;
 
-  const note = await db.orm.public.Note
-    .where({ slug })
-    .where((note) => note.publishedAt.isNotNull())
-    .include("folder")
-    .first();
+  const note = await getNoteBySlug(slug);
 
   if (!note) {
     notFound();
@@ -30,7 +26,9 @@ export default async function NotePage({
           <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">
             {note.title}
           </h1>
-          <p className="mt-4 font-mono text-sm text-muted-foreground">/{note.slug}</p>
+          <p className="mt-4 font-mono text-sm text-muted-foreground">
+            /{note.slug}
+          </p>
           {note.folder && note.folder.publishedAt && (
             <Link
               className="mt-6 inline-block text-sm font-medium text-muted-foreground transition hover:text-foreground"

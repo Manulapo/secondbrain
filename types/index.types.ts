@@ -1,13 +1,3 @@
-export type ExplorerNote = { id: string; title: string; slug: string };
-
-export type ExplorerFolder = {
-  id: string;
-  name: string;
-  slug: string;
-  children: ExplorerFolder[];
-  notes: ExplorerNote[];
-};
-
 export type AuthenticatedUser = {
   id: string;
   email: string;

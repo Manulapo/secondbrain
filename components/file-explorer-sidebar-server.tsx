@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
-import { ExplorerFolder } from "@/types/index.types";
 import { FileExplorerSidebar } from "./file-explorer-sidebar";
+import { ExplorerFolder } from "@/types/folder.types";
 
 export async function FileExplorerSidebarServer() {
   const folders = await db.orm.public.Folder

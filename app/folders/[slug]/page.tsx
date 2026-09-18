@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { db } from "@/lib/db";
+import { getFolderBySlug } from "@/lib/folders/queries";
 
 export default async function FolderPage({
   params,
@@ -10,26 +11,7 @@ export default async function FolderPage({
 }) {
   const { slug } = await params;
 
-  const folder = await db.orm.public.Folder
-    .where({ slug })
-    .where((folder) =>
-      folder.notes.some((note) => note.publishedAt.isNotNull()),
-    )
-    .include("notes", (notes) =>
-      notes
-        .where((note) => note.publishedAt.isNotNull())
-        .orderBy((note) => note.title.asc()), // alphabetical order
-    )
-    .include("parent", (parent) =>
-      parent
-        .where((parent) => parent.notes.some((note) => note.publishedAt.isNotNull()))
-    )
-    .include("children", (subFolders) => // include children folders and their notes
-      subFolders
-      .where((subFolder) => subFolder.notes.some((note) => note.publishedAt.isNotNull()))
-      .orderBy((child) => child.name.asc()),
-    )
-    .first();
+  const folder = await getFolderBySlug(slug);
 
   if (!folder) {
     notFound();

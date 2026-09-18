@@ -4,37 +4,18 @@ import { revalidatePath } from "next/cache";
 
 import { requireAdmin } from "@/lib/auth/auth-utils";
 import { db } from "@/lib/db";
-
-function slugify(name: string) {
-  return name
-    .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
+import { validateFolderName } from "@/lib/folders/helpers";
 
 export async function createFolder(formData: FormData) {
-  // Authorization belongs in the mutation, not only in the page that renders it.
   await requireAdmin();
 
-  const nameValue = formData.get("name");
+  const result = validateFolderName(formData.get("name"));
 
-  if (typeof nameValue !== "string") {
-    throw new Error("Folder name is required.");
+  if (!result.success) {
+    throw new Error(result.error);
   }
 
-  const name = nameValue.trim();
-
-  if (name.length < 1 || name.length > 80) {
-    throw new Error("Folder name must be between 1 and 80 characters.");
-  }
-
-  const slug = slugify(name);
-
-  if (!slug) {
-    throw new Error("Folder name must contain letters or numbers.");
-  }
+  const { name, slug } = result.data;
 
   const existingFolder = await db.orm.public.Folder.where({ slug }).first();
 
@@ -44,6 +25,85 @@ export async function createFolder(formData: FormData) {
 
   await db.orm.public.Folder.create({ name, slug });
 
-  // The page reads from the database on the server, so invalidate its cached result.
   revalidatePath("/admin/folders");
+}
+
+export async function updateFolder(formData: FormData) {
+  await requireAdmin();
+
+  const originalSlug = formData.get("slug");
+
+  if (typeof originalSlug !== "string" || !originalSlug.trim()) {
+    throw new Error("Invalid folder.");
+  }
+
+  const result = validateFolderName(formData.get("name"));
+
+  if (!result.success) {
+    throw new Error(result.error);
+  }
+
+  const { name, slug: newSlug } = result.data;
+
+  const folder = await db.orm.public.Folder
+    .where({ slug: originalSlug })
+    .first();
+
+  if (!folder) {
+    throw new Error("Folder does not exist.");
+  }
+
+  // if the slug changed, make sure another folder doesn't already use it
+  if (newSlug !== originalSlug) {
+    const conflictingFolder = await db.orm.public.Folder
+      .where({ slug: newSlug })
+      .first();
+
+    if (conflictingFolder) {
+      throw new Error("A folder with that name already exists.");
+    }
+  }
+
+  await db.orm.public.Folder
+    .where({ id: folder.id })
+    .update({
+      name,
+      slug: newSlug,
+    });
+
+  revalidatePath("/admin/folders");
+}
+
+export async function deleteFolder(formData: FormData) {
+  await requireAdmin();
+
+  const slugValue = formData.get("slug");
+
+  if (typeof slugValue !== "string" || !slugValue.trim()) {
+    throw new Error("Folder name is required.");
+  }
+
+  const slug = slugValue.trim();
+
+  const existingFolder = await db.orm.public.Folder.where({ slug }).first();
+
+  if (!existingFolder) {
+    throw new Error("A folder with that name does not exist.");
+  }
+
+  await db.orm.public.Folder.where({ id: existingFolder.id }).delete();
+
+  revalidatePath("/admin/folders");
+}
+
+export async function ensureFolderExists(folderId: number | null) {
+  if (folderId === null) {
+    return;
+  }
+
+  const folder = await db.orm.public.Folder.where({ id: folderId }).first();
+
+  if (!folder) {
+    throw new Error("Folder does not exist.");
+  }
 }

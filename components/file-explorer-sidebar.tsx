@@ -41,7 +41,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { ExplorerFolder } from "@/types/index.types";
+import { ExplorerFolder } from "@/types/folder.types";
 
 function ItemActions({ name }: { name: string }) {
   return (
