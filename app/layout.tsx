@@ -2,11 +2,9 @@ import type { Metadata } from "next";
 
 import { FileExplorerSidebarServer } from "@/components/file-explorer-sidebar-server";
 import { ThemeProvider } from "@/components/theme-provider";
-import {
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { Toaster } from "@/components/ui/sonner";
 
 import "./globals.css";
 
@@ -29,6 +27,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                 </div>
                 {children}
               </div>
+              <Toaster />
             </SidebarProvider>
           </TooltipProvider>
         </ThemeProvider>

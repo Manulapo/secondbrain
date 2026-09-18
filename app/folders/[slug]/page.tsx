@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 
 import { db } from "@/lib/db";
 import { getFolderBySlug } from "@/lib/folders/queries";
+import { FileText, Notebook } from "lucide-react";
+import { cn } from "cn";
 
 export default async function FolderPage({
   params,
@@ -40,50 +42,18 @@ export default async function FolderPage({
         </header>
 
         <div className="mt-8 space-y-6">
-          <section className="rounded-2xl border border-border bg-card p-6 shadow-sm">
-            <div className="flex items-baseline justify-between gap-4">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Browse</p>
-                <h2 className="mt-1 text-xl font-semibold">Subfolders</h2>
-              </div>
-              <span className="text-sm text-muted-foreground">
-                {folder.children.length}
-              </span>
-            </div>
-            <ul className="mt-5 grid gap-3 sm:grid-cols-2">
-              {folder.children.map((child) => (
-                <li key={child.id}>
-                  <Link
-                    className="group flex items-center justify-between rounded-xl border border-border px-4 py-3 font-medium transition hover:border-foreground/20 hover:bg-muted"
-                    href={`/folders/${child.slug}`}
-                  >
-                    {child.name}
-                    <span className="text-muted-foreground transition group-hover:translate-x-1 group-hover:text-foreground">
-                      →
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </section>
-
-          <section className="rounded-2xl border border-border bg-card p-6 shadow-sm">
-            <div className="flex items-baseline justify-between gap-4">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Published</p>
-                <h2 className="mt-1 text-xl font-semibold">Notes</h2>
-              </div>
-              <span className="text-sm text-muted-foreground">
-                {folder.notes.length}
-              </span>
-            </div>
-            <ul className="mt-5 divide-y divide-border border-y border-border">
+          <section className="rounded-2xl border border-border bg-card px-5 shadow-sm">
+            <ul className="border-border">
               {folder.notes.map((note) => (
                 <li key={note.id}>
                   <Link
-                    className="block py-4 font-medium text-muted-foreground transition hover:px-2 hover:text-foreground"
+                    className={cn(
+                      "block py-4 font-medium text-muted-foreground transition hover:px-2 hover:text-foreground group/note-link flex items-center gap-2",
+                      folder.notes.length > 1 && "border-b border-border/20",
+                    )}
                     href={`/notes/${note.slug}`}
                   >
+                    <FileText className="mr-2 h-4 w-4" />
                     {note.title}
                   </Link>
                 </li>

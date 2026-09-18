@@ -8,13 +8,18 @@ import { ensureFolderExists } from "../folders/actions";
 export async function createNote(formData: FormData) {
   await requireAdmin();
 
-  const result = validateNote(formData.get("title"), formData.get("content"));
+  const hasContent = formData.has("content");
+  const result = validateNote(
+    formData.get("title"),
+    hasContent ? formData.get("content") : formData.get("title"),
+  );
 
   if (!result.success) {
     throw new Error(result.error);
   }
 
-  const { title, slug, content } = result.data;
+  const { title, slug } = result.data;
+  const content = hasContent ? result.data.content : "";
   const folderId = getFolderId(formData);
 
   const existingNote = await db.orm.public.Note.where({ slug }).first();
@@ -34,6 +39,8 @@ export async function createNote(formData: FormData) {
   });
 
   revalidateNotePaths(slug);
+
+  return { slug };
 }
 
 export async function updateNote(formData: FormData) {
@@ -83,6 +90,8 @@ export async function updateNote(formData: FormData) {
 
   revalidateNotePaths(originalSlug);
   revalidateNotePaths(newSlug);
+
+  return { slug: newSlug };
 }
 
 export async function deleteNote(formData: FormData) {

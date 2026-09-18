@@ -12,4 +12,11 @@ export type NoteValidationResult =
     error: string;
   };
 
-export type ExplorerNote = { id: string; title: string; slug: string };
+export type ExplorerNote = {
+  id: string;
+  title: string;
+  slug: string;
+  content: string;
+  folderId: string;
+  published: boolean;
+};

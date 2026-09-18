@@ -1,22 +1,16 @@
-import { db } from "@/lib/db";
-import { FileExplorerSidebar } from "./file-explorer-sidebar";
+import { getAdminFolders, getFolders } from "@/lib/folders/queries";
+import { getAdminNotes, getNotes } from "@/lib/notes/queries";
 import { ExplorerFolder } from "@/types/folder.types";
+import { ExplorerNote } from "@/types/notes.types";
+import { FileExplorerSidebar } from "./file-explorer-sidebar";
+import { getCurrentUser } from "@/lib/auth/auth-utils";
 
 export async function FileExplorerSidebarServer() {
-  const folders = await db.orm.public.Folder
-    .where((folder) => folder.publishedAt.isNotNull())
-    .where((folder) =>
-      folder.notes.some((note) => note.publishedAt.isNotNull()),
-    )
-    .include("notes", (notes) =>
-      notes
-        .where((note) => note.publishedAt.isNotNull())
-        .orderBy((note) => note.title.asc()),
-    )
-    .orderBy((folder) => folder.name.asc())
-    .all();
-
-  const nodes = new Map<number, ExplorerFolder>();
+  const currentUser = await getCurrentUser();
+  const isAdmin = currentUser?.role === "ADMIN";
+  const folders = isAdmin ? await getAdminFolders() : await getFolders();
+  const notes = isAdmin ? await getAdminNotes() : await getNotes();
+  const nodes = new Map<number,ExplorerFolder>();
 
   for (const folder of folders) {
     nodes.set(folder.id, {
@@ -28,11 +22,24 @@ export async function FileExplorerSidebarServer() {
         id: String(note.id),
         title: note.title,
         slug: note.slug,
+        folderId: String(folder.id),
+        content: '',
+        published: true,
       })),
     });
   }
 
   const roots: ExplorerFolder[] = [];
+  const unfiledNotes: ExplorerNote[] = notes
+    .filter((note) => note.folderId === null)
+    .map((note) => ({
+      id: String(note.id),
+      title: note.title,
+      slug: note.slug,
+      content: note.content,
+      folderId: '',
+      published: note.publishedAt !== null,
+    }));
 
   for (const folder of folders) {
     const node = nodes.get(folder.id);
@@ -44,5 +51,5 @@ export async function FileExplorerSidebarServer() {
     else if (node) roots.push(node);
   }
 
-  return <FileExplorerSidebar folderTree={roots} />;
+  return <FileExplorerSidebar isAdmin={isAdmin} folderTree={roots} unfiledNotes={unfiledNotes} />;
 }

@@ -1,15 +1,10 @@
-import Link from "next/link";
+import { getAdminFolders } from "@/lib/folders/queries";
+import { FolderCreateForm } from "@/components/admin/folder-create-form";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { db } from "@/lib/db";
-
-import { createFolder } from "./actions";
+import { FolderRow } from "./folder-row";
 
 export default async function AdminFoldersPage() {
-  const folders = await db.orm.public.Folder.orderBy((folder) =>
-    folder.createdAt.desc(),
-  ).all();
+  const folders = await getAdminFolders();
 
   return (
     <div className="min-h-screen bg-background px-6 py-12 text-foreground sm:px-8">
@@ -28,24 +23,7 @@ export default async function AdminFoldersPage() {
 
         <section className="rounded-2xl border border-border bg-card p-6 shadow-sm">
           <h2 className="text-xl font-semibold">New folder</h2>
-          <form
-            action={createFolder}
-            className="mt-5 flex flex-col gap-3 sm:flex-row"
-          >
-            <label className="sr-only" htmlFor="folder-name">
-              Folder name
-            </label>
-            <Input
-              id="folder-name"
-              maxLength={80}
-              name="name"
-              placeholder="e.g. Programming"
-              required
-            />
-            <Button className="sm:w-auto" type="submit">
-              Create folder
-            </Button>
-          </form>
+          <FolderCreateForm />
         </section>
 
         <section className="space-y-4">
@@ -59,23 +37,12 @@ export default async function AdminFoldersPage() {
           {folders.length > 0 ? (
             <ul className="divide-y divide-border rounded-2xl border border-border bg-card">
               {folders.map((folder) => (
-                <li
-                  className="flex items-center justify-between gap-4 px-5 py-4"
+                <FolderRow
                   key={folder.id}
-                >
-                  <div>
-                    <p className="font-medium">{folder.name}</p>
-                    <p className="font-mono text-sm text-muted-foreground">
-                      /{folder.slug}
-                    </p>
-                  </div>
-                  <Link
-                    className="text-sm font-medium text-muted-foreground transition hover:text-foreground"
-                    href={`/folders/${folder.slug}`}
-                  >
-                    View →
-                  </Link>
-                </li>
+                  id={folder.id}
+                  name={folder.name}
+                  slug={folder.slug}
+                />
               ))}
             </ul>
           ) : (

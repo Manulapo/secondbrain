@@ -26,6 +26,7 @@ export async function createFolder(formData: FormData) {
   await db.orm.public.Folder.create({ name, slug });
 
   revalidatePath("/admin/folders");
+  revalidatePath("/", "layout");
 }
 
 export async function updateFolder(formData: FormData) {
@@ -72,6 +73,9 @@ export async function updateFolder(formData: FormData) {
     });
 
   revalidatePath("/admin/folders");
+  revalidatePath("/", "layout");
+
+  return { slug: newSlug };
 }
 
 export async function deleteFolder(formData: FormData) {
@@ -94,6 +98,7 @@ export async function deleteFolder(formData: FormData) {
   await db.orm.public.Folder.where({ id: existingFolder.id }).delete();
 
   revalidatePath("/admin/folders");
+  revalidatePath("/", "layout");
 }
 
 export async function ensureFolderExists(folderId: number | null) {
