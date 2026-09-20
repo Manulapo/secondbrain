@@ -6,17 +6,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import { DeleteConfirmationDialog } from "@/components/delete-confirmation-dialog";
 import { Input } from "@/components/ui/input";
 import { getActionErrorMessage } from "@/lib/action-error";
 
@@ -90,43 +80,25 @@ export function FolderRow({ id, name, slug }: FolderRowProps) {
                 <Save />
               </Button>
             </form>
-            <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
-              <AlertDialogTrigger
-                render={
-                  <Button
-                    aria-label={`Delete ${name}`}
-                    className="ml-1 h-8 w-full cursor-pointer border border-destructive/40 px-4"
-                    size="icon"
-                    type="button"
-                    variant="destructive"
-                  />
-                }
+            <DeleteConfirmationDialog
+              deleting={deleting}
+              itemName={name}
+              itemType="folder"
+              onConfirm={handleDelete}
+              onOpenChange={setDeleteOpen}
+              open={deleteOpen}
+            >
+              <Button
+                aria-label={`Delete ${name}`}
+                className="ml-1 h-8 w-full cursor-pointer border border-destructive/40 px-4"
+                size="icon"
+                type="button"
+                variant="destructive"
               >
                 Delete Folder
                 <Trash2 className="ml-2 h-4 w-4" />
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Delete “{name}”?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. The folder will be permanently
-                    deleted.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel disabled={deleting}>
-                    Cancel
-                  </AlertDialogCancel>
-                  <AlertDialogAction
-                    disabled={deleting}
-                    onClick={handleDelete}
-                    variant="destructive"
-                  >
-                    {deleting ? "Deleting..." : "Delete folder"}
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+              </Button>
+            </DeleteConfirmationDialog>
           </div>
         ) : (
           <div className="flex justify-between">

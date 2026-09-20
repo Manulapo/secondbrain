@@ -20,3 +20,23 @@ export type ExplorerNote = {
   folderId: string;
   published: boolean;
 };
+
+//scripts/import-obsidian.ts
+export type ImportedNote = {
+  sourcePath: string;
+  filename: string;
+  folderPath: string | null;
+
+  title: string;
+  slug: string;
+
+  frontmatter: Record<string, unknown>;
+  content: string;
+
+  isMoc: boolean;
+};
+
+export type ValidationIssue = {
+  level: "error" | "warning";
+  message: string;
+};

@@ -2,7 +2,12 @@
 
 import { requireAdmin } from "@/lib/auth/auth-utils";
 import { db } from "@/lib/db";
-import { getFolderId, isPublished, revalidateNotePaths, validateNote } from "@/lib/notes/helpers";
+import {
+  getFolderId,
+  isPublished,
+  revalidateNotePaths,
+  validateNote,
+} from "@/lib/notes/helpers";
 import { ensureFolderExists } from "../folders/actions";
 
 export async function createNote(formData: FormData) {
@@ -91,7 +96,7 @@ export async function updateNote(formData: FormData) {
   revalidateNotePaths(originalSlug);
   revalidateNotePaths(newSlug);
 
-  return { slug: newSlug };
+  return { content, slug: newSlug, title };
 }
 
 export async function deleteNote(formData: FormData) {

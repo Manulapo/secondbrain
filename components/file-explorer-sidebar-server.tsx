@@ -1,5 +1,6 @@
 import { getAdminFolders, getFolders } from "@/lib/folders/queries";
 import { getAdminNotes, getNotes } from "@/lib/notes/queries";
+import { isMocNote } from "@/lib/utils";
 import { ExplorerFolder } from "@/types/folder.types";
 import { ExplorerNote } from "@/types/notes.types";
 import { FileExplorerSidebar } from "./file-explorer-sidebar";
@@ -10,7 +11,7 @@ export async function FileExplorerSidebarServer() {
   const isAdmin = currentUser?.role === "ADMIN";
   const folders = isAdmin ? await getAdminFolders() : await getFolders();
   const notes = isAdmin ? await getAdminNotes() : await getNotes();
-  const nodes = new Map<number,ExplorerFolder>();
+  const nodes = new Map<number, ExplorerFolder>();
 
   for (const folder of folders) {
     nodes.set(folder.id, {
@@ -18,14 +19,16 @@ export async function FileExplorerSidebarServer() {
       name: folder.name,
       slug: folder.slug,
       children: [],
-      notes: folder.notes.map((note) => ({
-        id: String(note.id),
-        title: note.title,
-        slug: note.slug,
-        folderId: String(folder.id),
-        content: '',
-        published: true,
-      })),
+      notes: folder.notes
+        .filter((note) => !isMocNote(note.title))
+        .map((note) => ({
+          id: String(note.id),
+          title: note.title,
+          slug: note.slug,
+          folderId: String(folder.id),
+          content: "",
+          published: true,
+        })).sort((a, b) => a.title.localeCompare(b.title, undefined, { numeric: true })),
     });
   }
 
@@ -37,19 +40,26 @@ export async function FileExplorerSidebarServer() {
       title: note.title,
       slug: note.slug,
       content: note.content,
-      folderId: '',
+      folderId: "",
       published: note.publishedAt !== null,
     }));
 
   for (const folder of folders) {
     const node = nodes.get(folder.id);
-    const parent = folder.parentFolderId !== null
-    ? nodes.get(folder.parentFolderId)
-    : undefined;
+    const parent =
+      folder.parentFolderId !== null
+        ? nodes.get(folder.parentFolderId)
+        : undefined;
 
     if (node && parent) parent.children.push(node);
     else if (node) roots.push(node);
   }
 
-  return <FileExplorerSidebar isAdmin={isAdmin} folderTree={roots} unfiledNotes={unfiledNotes} />;
+  return (
+    <FileExplorerSidebar
+      isAdmin={isAdmin}
+      folderTree={roots}
+      unfiledNotes={unfiledNotes}
+    />
+  );
 }

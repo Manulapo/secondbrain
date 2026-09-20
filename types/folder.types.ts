@@ -20,3 +20,10 @@ export type ExplorerFolder = {
   children: ExplorerFolder[];
   notes: ExplorerNote[];
 };
+
+//scripts/import-obsidian.ts
+export type ImportedFolder = {
+  sourcePath: string;
+  name: string;
+  slug: string;
+};

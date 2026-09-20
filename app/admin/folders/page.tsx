@@ -8,7 +8,7 @@ export default async function AdminFoldersPage() {
 
   return (
     <div className="min-h-screen bg-background px-6 py-12 text-foreground sm:px-8">
-      <div className="mx-auto max-w-3xl space-y-10">
+      <div className="space-y-10">
         <header className="space-y-2">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground">
             Admin / Folders

@@ -20,16 +20,7 @@ import {
   updateFolder,
 } from "@/app/admin/folders/actions";
 import { createNote, deleteNote, updateNote } from "@/app/admin/notes/actions";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { DeleteConfirmationDialog } from "@/components/delete-confirmation-dialog";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -68,10 +59,12 @@ import { ExplorerNote } from "@/types/notes.types";
 
 function ItemActions({
   name,
+  rowType = "menu-item",
   onRename,
   onDelete,
 }: {
   name: string;
+  rowType?: "menu-item" | "menu-sub-item";
   onRename?: () => void;
   onDelete?: () => void;
 }) {
@@ -84,13 +77,13 @@ function ItemActions({
               render={
                 <SidebarMenuAction
                   aria-label={`More actions for ${name}`}
-                  showOnHover
+                  showOnHover={rowType}
                 />
               }
             />
           }
         >
-          <MoreHorizontal />
+          <MoreHorizontal className="size-4" />
         </TooltipTrigger>
         <TooltipContent side="right">More actions for {name}</TooltipContent>
       </Tooltip>
@@ -123,7 +116,7 @@ export function FileExplorerSidebar({
 }) {
   const router = useRouter();
   const [expanded, setExpanded] = useState(
-    () => new Set(expandableFolderIds(folderTree)), // expand all folders that have contents
+    () => new Set(expandableFolderIds([])), // expand all folders that have contents
   );
   const [creatingFolder, setCreatingFolder] = useState(false);
   const [newFolderName, setNewFolderName] = useState("");
@@ -273,7 +266,7 @@ export function FileExplorerSidebar({
         </button>
         {isRenaming ? (
           <form
-            className="flex min-w-0 items-center gap-2 pl-8"
+            className="flex w-full items-center gap-2 pl-8"
             onSubmit={handleRenameFolder}
           >
             <input name="slug" type="hidden" value={folder.slug} />
@@ -281,7 +274,7 @@ export function FileExplorerSidebar({
             <Input
               autoFocus
               aria-label={`Rename ${folder.name}`}
-              className="h-8 min-w-0 flex-1"
+              className="h-8 w-full flex-1"
               maxLength={80}
               name="name"
               onBlur={() => {
@@ -308,7 +301,9 @@ export function FileExplorerSidebar({
               render={<Link href={`/folders/${folder.slug}`} />}
             >
               <Folder />
-              <span>{folder.name}</span>
+              <span className={isExpanded ? "font-bold" : ""}>
+                {folder.name}
+              </span>
             </SidebarMenuButton>
             <ItemActions
               name={folder.name}
@@ -352,7 +347,7 @@ export function FileExplorerSidebar({
                       type="hidden"
                       value={note.published ? "true" : "false"}
                     />
-                    <FileText className="size-4 shrink-0" />
+                    <FileText className="ml-3 size-4 shrink-0" />
                     <Input
                       autoFocus
                       aria-label={`Rename ${note.title}`}
@@ -381,13 +376,15 @@ export function FileExplorerSidebar({
                 ) : (
                   <>
                     <SidebarMenuSubButton
+                      className="text-foreground/80"
                       render={<Link href={`/notes/${note.slug}`} />}
                     >
-                      <FileText />
+                      <FileText className="ml-3 opacity-60" />
                       <span>{note.title}</span>
                     </SidebarMenuSubButton>
                     <ItemActions
                       name={note.title}
+                      rowType="menu-sub-item"
                       onDelete={() =>
                         setDeletingNote({
                           title: note.title,
@@ -420,11 +417,12 @@ export function FileExplorerSidebar({
     return (
       <SidebarMenuSubItem key={note.id}>
         <SidebarMenuSubButton render={<Link href={`/notes/${note.slug}`} />}>
-          <FileText />
+          <FileText className="ml-3" />
           <span>{note.title}</span>
         </SidebarMenuSubButton>
         <ItemActions
           name={note.title}
+          rowType="menu-sub-item"
           onDelete={() =>
             setDeletingNote({ title: note.title, slug: note.slug })
           }
@@ -509,7 +507,7 @@ export function FileExplorerSidebar({
                       className="flex items-center gap-2"
                       onSubmit={handleCreateNote}
                     >
-                      <FileText className="size-4 shrink-0" />
+                      <FileText className="ml-3 size-4 shrink-0" />
                       <Input
                         autoFocus
                         aria-label="New note title"
@@ -540,7 +538,7 @@ export function FileExplorerSidebar({
                       className="flex items-center gap-2"
                       onSubmit={handleCreateFolder}
                     >
-                      <Folder className="ml- size-4" />
+                      <Folder className="size-4" />
                       <Input
                         autoFocus
                         aria-label="New folder name"
@@ -578,62 +576,26 @@ export function FileExplorerSidebar({
           </div>
         </SidebarFooter>
       </Sidebar>
-      <AlertDialog
+      <DeleteConfirmationDialog
+        deleting={deleting}
+        itemName={deletingFolder?.name ?? ""}
+        itemType="folder"
+        onConfirm={handleDeleteFolder}
         open={deletingFolder !== null}
         onOpenChange={(open) => {
           if (!open && !deleting) setDeletingFolder(null);
         }}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              Delete “{deletingFolder?.name}”?
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. The folder will be permanently
-              deleted.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              disabled={deleting}
-              onClick={handleDeleteFolder}
-              variant="destructive"
-            >
-              {deleting ? "Deleting..." : "Delete folder"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-      <AlertDialog
+      />
+      <DeleteConfirmationDialog
+        deleting={deleting}
+        itemName={deletingNote?.title ?? ""}
+        itemType="note"
+        onConfirm={handleDeleteNote}
         open={deletingNote !== null}
         onOpenChange={(open) => {
           if (!open && !deleting) setDeletingNote(null);
         }}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              Delete “{deletingNote?.title}”?
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. The note will be permanently
-              deleted.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              disabled={deleting}
-              onClick={handleDeleteNote}
-              variant="destructive"
-            >
-              {deleting ? "Deleting..." : "Delete note"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      />
     </>
   );
 }

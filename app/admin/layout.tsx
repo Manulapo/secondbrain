@@ -19,8 +19,6 @@ export default async function AdminLayout({
 
   return (
     <main>
-      <p>Logged in as {user.username}</p>
-
       {children}
     </main>
   );
