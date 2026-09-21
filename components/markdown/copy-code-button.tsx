@@ -3,9 +3,7 @@
 import { Check, Copy } from "lucide-react";
 import { useState } from "react";
 
-type CopyCodeButtonProps = {
-  code: string;
-};
+import type { CopyCodeButtonProps } from "@/types/markdown.types";
 
 export function CopyCodeButton({ code }: CopyCodeButtonProps) {
   const [copied, setCopied] = useState(false);

@@ -16,9 +16,7 @@ export type ExplorerNote = {
   id: string;
   title: string;
   slug: string;
-  content: string;
   folderId: string;
-  published: boolean;
 };
 
 //scripts/import-obsidian.ts
@@ -39,4 +37,12 @@ export type ImportedNote = {
 export type ValidationIssue = {
   level: "error" | "warning";
   message: string;
+};
+
+export type NoteEditFormProps = {
+  content: string;
+  folderId: number | null;
+  originalSlug: string;
+  published: boolean;
+  title: string;
 };

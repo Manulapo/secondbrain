@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { HTMLAttributes, ReactNode } from "react";
 import {
   CircleCheck,
   CircleHelp,
@@ -56,6 +56,29 @@ const CALLOUT_ICONS: Record<string, ReactNode> = {
 
 function formatCalloutType(type: string) {
   return type.charAt(0).toUpperCase() + type.slice(1);
+}
+
+export function MarkdownCallout({
+  children,
+  ...props
+}: HTMLAttributes<HTMLDivElement>) {
+  const dataProps = props as HTMLAttributes<HTMLDivElement> &
+    Record<`data-${string}`, string | undefined>;
+  const calloutType = dataProps["data-callout-type"];
+
+  if (!calloutType) {
+    return <div {...props}>{children}</div>;
+  }
+
+  return (
+    <Callout
+      type={calloutType}
+      title={dataProps["data-callout-title"]}
+      fold={dataProps["data-callout-fold"] as "+" | "-" | undefined}
+    >
+      {children}
+    </Callout>
+  );
 }
 
 export function Callout({

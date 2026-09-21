@@ -40,6 +40,24 @@ export function validateNote(
   titleValue: FormDataEntryValue | null,
   contentValue: FormDataEntryValue | null,
 ): NoteValidationResult {
+  const titleResult = validateNoteTitle(titleValue);
+  if (!titleResult.success) return titleResult;
+
+  const { title, slug } = titleResult.data;
+
+  if (typeof contentValue !== "string" || !contentValue.trim()) {
+    return { success: false, error: "Note content is required." };
+  }
+
+  return {
+    success: true,
+    data: { title, slug, content: contentValue },
+  };
+}
+
+export function validateNoteTitle(
+  titleValue: FormDataEntryValue | null,
+): NoteValidationResult {
   if (typeof titleValue !== "string") {
     return { success: false, error: "Note title is required." };
   }
@@ -62,12 +80,5 @@ export function validateNote(
     };
   }
 
-  if (typeof contentValue !== "string" || !contentValue.trim()) {
-    return { success: false, error: "Note content is required." };
-  }
-
-  return {
-    success: true,
-    data: { title, slug, content: contentValue },
-  };
+  return { success: true, data: { title, slug, content: "" } };
 }

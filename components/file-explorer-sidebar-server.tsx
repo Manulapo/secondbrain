@@ -1,5 +1,8 @@
-import { getAdminFolders, getFolders } from "@/lib/folders/queries";
-import { getAdminNotes, getNotes } from "@/lib/notes/queries";
+import {
+  getAdminExplorerFolders,
+  getExplorerFolders,
+} from "@/lib/folders/queries";
+import { getAdminExplorerNotes, getExplorerNotes } from "@/lib/notes/queries";
 import { isMocNote } from "@/lib/utils";
 import { ExplorerFolder } from "@/types/folder.types";
 import { ExplorerNote } from "@/types/notes.types";
@@ -9,8 +12,12 @@ import { getCurrentUser } from "@/lib/auth/auth-utils";
 export async function FileExplorerSidebarServer() {
   const currentUser = await getCurrentUser();
   const isAdmin = currentUser?.role === "ADMIN";
-  const folders = isAdmin ? await getAdminFolders() : await getFolders();
-  const notes = isAdmin ? await getAdminNotes() : await getNotes();
+  const folders = isAdmin
+    ? await getAdminExplorerFolders()
+    : await getExplorerFolders();
+  const notes = isAdmin
+    ? await getAdminExplorerNotes()
+    : await getExplorerNotes();
   const nodes = new Map<number, ExplorerFolder>();
 
   for (const folder of folders) {
@@ -26,8 +33,6 @@ export async function FileExplorerSidebarServer() {
           title: note.title,
           slug: note.slug,
           folderId: String(folder.id),
-          content: "",
-          published: true,
         }))
         .sort((a, b) =>
           a.title.localeCompare(b.title, undefined, { numeric: true }),
@@ -42,9 +47,7 @@ export async function FileExplorerSidebarServer() {
       id: String(note.id),
       title: note.title,
       slug: note.slug,
-      content: note.content,
       folderId: "",
-      published: note.publishedAt !== null,
     }));
 
   for (const folder of folders) {
@@ -63,6 +66,7 @@ export async function FileExplorerSidebarServer() {
       isAdmin={isAdmin}
       folderTree={roots}
       unfiledNotes={unfiledNotes}
+      className="rounded-2xl overflow-hidden h-[98vh] mt-[1vh] ml-[0.5vw] shadow-lg backdrop-blur supports-[backdrop-filter]:bg-card/80"
     />
   );
 }

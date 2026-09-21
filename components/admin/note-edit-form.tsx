@@ -9,14 +9,7 @@ import { MarkdownEditor } from "@/components/markdown/markdown-editor";
 import { FormToolbar } from "@/components/ui/form-toolbar";
 import { Input } from "@/components/ui/input";
 import { getActionErrorMessage } from "@/lib/action-error";
-
-type NoteEditFormProps = {
-  content: string;
-  folderId: number | null;
-  originalSlug: string;
-  published: boolean;
-  title: string;
-};
+import type { NoteEditFormProps } from "@/types/notes.types";
 
 export function NoteEditForm({
   content: initialContent,

@@ -10,15 +10,10 @@ import {
   syntaxHighlighting,
 } from "@codemirror/language";
 import { tags } from "@lezer/highlight";
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef } from "react";
 import { EditorView } from "@codemirror/view";
 import { CopyMarkdownButton } from "@/components/markdown/copy-markdown-button";
-
-type MarkdownEditorProps = {
-  markdown: string;
-  onChange: (markdown: string) => void;
-  toolbarActions?: ReactNode;
-};
+import type { MarkdownEditorProps } from "@/types/markdown.types";
 
 const markdownHighlightStyle = HighlightStyle.define([
   { tag: tags.heading, color: "var(--primary)", fontWeight: "700" },

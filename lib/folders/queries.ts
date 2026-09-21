@@ -16,6 +16,32 @@ export async function getFolders() {
     .all();
 }
 
+export async function getExplorerFolders() {
+  return db.orm.public.Folder.where((folder) => folder.publishedAt.isNotNull())
+    .select("id", "name", "slug", "parentFolderId")
+    .include("notes", (notes) =>
+      notes
+        .where((note) => note.publishedAt.isNotNull())
+        .select("id", "title", "slug", "folderId")
+        .orderBy((note) => note.title.asc()),
+    )
+    .orderBy((folder) => folder.name.asc())
+    .all();
+}
+
+export async function getAdminExplorerFolders() {
+  await requireAdmin();
+
+  return db.orm.public.Folder.select("id", "name", "slug", "parentFolderId")
+    .include("notes", (notes) =>
+      notes
+        .select("id", "title", "slug", "folderId")
+        .orderBy((note) => note.title.asc()),
+    )
+    .orderBy((folder) => folder.name.asc())
+    .all();
+}
+
 export async function getFolderBySlug(slug: string) {
   return await db.orm.public.Folder.where({ slug })
     .where((folder) => folder.publishedAt.isNotNull())

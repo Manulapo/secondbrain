@@ -27,3 +27,9 @@ export type ImportedFolder = {
   name: string;
   slug: string;
 };
+
+export type FolderRowProps = {
+  id: number;
+  name: string;
+  slug: string;
+};

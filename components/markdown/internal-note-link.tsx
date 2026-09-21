@@ -5,11 +5,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { MarkdownPreview } from "@/components/markdown/markdown-preview";
-
-type NotePreview = {
-  title: string;
-  content: string;
-};
+import type { NotePreview } from "@/types/markdown.types";
 
 export function InternalNoteLink({
   href,

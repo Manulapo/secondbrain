@@ -12,6 +12,13 @@ export async function getNotes() {
     .all();
 }
 
+export async function getExplorerNotes() {
+  return db.orm.public.Note.where((note) => note.publishedAt.isNotNull())
+    .select("id", "title", "slug", "folderId")
+    .orderBy((note) => note.title.asc())
+    .all();
+}
+
 export async function getNoteBySlug(slug: string) {
   return db.orm.public.Note.where({ slug })
     .where((note) => note.publishedAt.isNotNull())
@@ -26,6 +33,14 @@ export async function getAdminNotes() {
 
   return db.orm.public.Note.include("folder")
     .orderBy((note) => note.createdAt.desc())
+    .all();
+}
+
+export async function getAdminExplorerNotes() {
+  await requireAdmin();
+
+  return db.orm.public.Note.select("id", "title", "slug", "folderId")
+    .orderBy((note) => note.title.asc())
     .all();
 }
 

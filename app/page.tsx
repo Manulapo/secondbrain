@@ -1,9 +1,11 @@
+import { appConfig } from "@/lib/app-config";
+
 export default async function Home() {
   return (
     <div className="w-6xl mx-auto pt-24">
-      <h1 className="text-4xl font-bold mb-6">Welcome to Secondbrain</h1>
+      <h1 className="text-4xl font-bold mb-6">Welcome to {appConfig.name}</h1>
       <p className="text-gray-400 mb-4">
-        This is a demo app for the Secondbrain project.
+        This is a demo app for the {appConfig.name} project.
       </p>
       <p className="text-gray-400">
         You can create a new folder by clicking the button below. You can also

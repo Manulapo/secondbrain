@@ -9,14 +9,9 @@ import { Button } from "@/components/ui/button";
 import { DeleteConfirmationDialog } from "@/components/delete-confirmation-dialog";
 import { Input } from "@/components/ui/input";
 import { getActionErrorMessage } from "@/lib/action-error";
+import type { FolderRowProps } from "@/types/folder.types";
 
 import { deleteFolder, updateFolder } from "./actions";
-
-type FolderRowProps = {
-  id: number;
-  name: string;
-  slug: string;
-};
 
 export function FolderRow({ id, name, slug }: FolderRowProps) {
   const [editing, setEditing] = useState(false);

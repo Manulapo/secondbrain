@@ -1,7 +1,5 @@
 "use client";
 
-import type { ReactElement } from "react";
-
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,16 +11,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-
-type DeleteConfirmationDialogProps = {
-  itemName: string;
-  itemType: "folder" | "note";
-  deleting?: boolean;
-  onConfirm: () => void | Promise<void>;
-  children?: ReactElement;
-  open?: boolean;
-  onOpenChange?: (open: boolean) => void;
-};
+import type { DeleteConfirmationDialogProps } from "@/types/ui.types";
 
 export function DeleteConfirmationDialog({
   itemName,

@@ -1,7 +1,5 @@
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import type { HTMLAttributes } from "react";
-
 import rehypeHighlight from "rehype-highlight";
 import { getNoteBySlug } from "@/lib/notes/queries";
 import {
@@ -10,29 +8,9 @@ import {
   resolveInternalLinks,
 } from "@/lib/notes/internal-links";
 import { InternalNoteLink } from "@/components/markdown/internal-note-link";
-import { Callout } from "@/components/markdown/callout";
+import { MarkdownCallout } from "@/components/markdown/callout";
 import { MarkdownCode } from "@/components/markdown/markdown-code";
 import { remarkCallouts } from "@/lib/notes/remark-callouts";
-
-function MarkdownDiv({ children, ...props }: HTMLAttributes<HTMLDivElement>) {
-  const dataProps = props as HTMLAttributes<HTMLDivElement> &
-    Record<`data-${string}`, string | undefined>;
-  const calloutType = dataProps["data-callout-type"];
-
-  if (!calloutType) {
-    return <div {...props}>{children}</div>;
-  }
-
-  return (
-    <Callout
-      type={calloutType}
-      title={dataProps["data-callout-title"]}
-      fold={dataProps["data-callout-fold"] as "+" | "-" | undefined}
-    >
-      {children}
-    </Callout>
-  );
-}
 
 export async function MarkdownRenderer({ children }: { children: string }) {
   const resolvedMarkdown = resolveInternalLinks(children);
@@ -67,7 +45,7 @@ export async function MarkdownRenderer({ children }: { children: string }) {
             );
           },
           code: MarkdownCode,
-          div: MarkdownDiv,
+          div: MarkdownCallout,
         }}
         rehypePlugins={[rehypeHighlight]}
         remarkPlugins={[remarkGfm, remarkCallouts]}

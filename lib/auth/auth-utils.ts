@@ -1,9 +1,8 @@
 import "server-only";
 
-import { User } from "better-auth";
 import { headers } from "next/headers";
-import { auth } from "./auth";
 import { db } from "../db";
+import { auth } from "./auth";
 
 export async function getCurrentUser() {
   const session = await auth.api.getSession({
@@ -15,13 +14,9 @@ export async function getCurrentUser() {
     return null;
   }
 
-  const userId = Number(session.user.id);
-
-  if (!Number.isInteger(userId)) {
-    return null;
-  }
-
-  const user = await db.orm.public.User.where({ id: userId }).first();
+  const user = await db.orm.public.User.where({
+    email: session.user.email,
+  }).first();
 
   return user ?? null;
 }

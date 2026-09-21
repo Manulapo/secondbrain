@@ -1,11 +1,5 @@
 import { Button } from "@/components/ui/button";
-
-type FormToolbarProps = {
-  formId: string;
-  isDirty: boolean;
-  isPending: boolean;
-  onCancel: () => void;
-};
+import type { FormToolbarProps } from "@/types/ui.types";
 
 export function FormToolbar({
   formId,
