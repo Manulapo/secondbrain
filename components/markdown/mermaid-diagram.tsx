@@ -20,6 +20,9 @@ export function MermaidDiagram({ code }: { code: string }) {
         primaryColor: "#3b2155",
         primaryTextColor: "#ffffff",
         primaryBorderColor: "#9999",
+        lineColor: "#F8B229",
+        secondaryColor: "#006100",
+        tertiaryColor: "#fff",
       },
 
       themeCSS: `

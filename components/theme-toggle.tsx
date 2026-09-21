@@ -57,7 +57,7 @@ export function ThemeToggle() {
       </Tooltip>
       <DropdownMenuContent align="end" side="top">
         <DropdownMenuRadioGroup
-          onValueChange={setTheme}
+          onValueChange={(value) => setTheme(value)}
           value={mounted ? theme : "system"}
         >
           <DropdownMenuRadioItem value="system">System</DropdownMenuRadioItem>
