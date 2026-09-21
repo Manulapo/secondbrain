@@ -1,0 +1,39 @@
+services:
+  app:
+    build:
+      context: .
+      target: runner
+
+    image: secondbrain:latest
+    container_name: secondbrain
+
+    restart: unless-stopped
+
+    network_mode: host
+
+    env_file:
+      - /etc/secondbrain/secondbrain.env
+
+    init: true
+
+    security_opt:
+      - no-new-privileges:true
+
+  migrate:
+    profiles:
+      - tools
+
+    build:
+      context: .
+      target: tooling
+
+    network_mode: host
+
+    env_file:
+      - /etc/secondbrain/secondbrain.env
+
+    command:
+      - npx
+      - prisma
+      - db
+      - migrate
