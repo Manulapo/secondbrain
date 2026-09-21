@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronRight, Folder } from "lucide-react";
+import { ChevronRight, Folder, FolderOpen } from "lucide-react";
 import Link from "next/link";
 import {
   SidebarMenuButton,
@@ -60,6 +60,7 @@ export function ExplorerFolderRow({
   renderFolder: (folder: ExplorerFolder) => React.ReactNode;
 }) {
   const hasContents = Boolean(folder.children.length || folder.notes.length);
+  const isContentSelected = folder.notes.some((note) => noteSlug === note.slug);
 
   return (
     <SidebarMenuItem
@@ -71,7 +72,7 @@ export function ExplorerFolderRow({
     >
       <button
         aria-label={`${isExpanded ? "Collapse" : "Expand"} ${folder.name}`}
-        className="absolute left-1 z-10 flex size-7 items-center justify-center rounded-md text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground disabled:opacity-30 group-data-[collapsible=icon]:hidden"
+        className="absolute left-1 z-10 flex size-7 items-center justify-center rounded-md text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-si\debar-accent-foreground disabled:opacity-30 group-data-[collapsible=icon]:hidden"
         disabled={!hasContents}
         onClick={onToggle}
         type="button"
@@ -100,7 +101,7 @@ export function ExplorerFolderRow({
               if (hasContents) onToggle();
             }}
           >
-            <Folder />
+            {isSelected || isContentSelected ? <FolderOpen /> : <Folder />}
             <span className={isSelected ? "font-bold" : ""}>{folder.name}</span>
           </SidebarMenuButton>
           {isAdmin ? (

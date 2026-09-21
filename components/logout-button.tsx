@@ -25,6 +25,7 @@ export function LogoutButton() {
       <TooltipTrigger
         render={
           <Button
+            className="h-8 w-8 opacity-50 hover:opacity-100"
             aria-label="Log out"
             onClick={handleLogout}
             size="icon"

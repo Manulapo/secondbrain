@@ -7,7 +7,7 @@ export const appConfig = {
   shortName: "Secondbrain",
   description: "A personal knowledge base for organizing notes and ideas.",
   icon: BrainCircuit,
-  iconPath: "/favicon.ico",
+  iconPath: "/icon.svg",
 } satisfies {
   name: string;
   shortName: string;

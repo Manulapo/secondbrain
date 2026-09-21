@@ -156,7 +156,7 @@ export function MarkdownEditor({
         <div className="min-h-[500px]" ref={editorContainerRef} />
       </div>
       {toolbarActions ? (
-        <div className="fixed bottom-4 left-1/2 z-20 w-[60%] -translate-x-1/2 rounded-xl border border-border bg-card/95 shadow-lg backdrop-blur supports-[backdrop-filter]:bg-card/80">
+        <div className="fixed bottom-4 left-1/2 z-20 w-[60%] -translate-x-1/2 rounded-xl border border-border bg-card/95 shadow-lg backdrop-blur supports-[backdrop-filter]:bg-card/80 max-w-fit">
           <div className="flex justify-end p-3">{toolbarActions}</div>
         </div>
       ) : null}

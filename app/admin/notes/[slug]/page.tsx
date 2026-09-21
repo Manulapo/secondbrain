@@ -1,6 +1,7 @@
 import { NoteEditForm } from "@/components/admin/note-edit-form";
 import { getAdminNoteBySlug } from "@/lib/notes/queries";
 import { notFound } from "next/navigation";
+import { PageLayout } from "@/components/page-layout";
 
 export default async function AdminNotePage({
   params,
@@ -16,7 +17,7 @@ export default async function AdminNotePage({
   }
 
   return (
-    <main className="min-h-screen px-6 py-12 text-foreground sm:px-8">
+    <PageLayout>
       <article className="mx-auto space-y-4 pb-28">
         <NoteEditForm
           content={note.content}
@@ -26,6 +27,6 @@ export default async function AdminNotePage({
           title={note.title}
         />
       </article>
-    </main>
+    </PageLayout>
   );
 }

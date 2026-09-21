@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { AuthAwareSidebarTrigger } from "@/components/auth-aware-sidebar";
 import { LogoutButton } from "@/components/logout-button";
 import { getCurrentUser } from "@/lib/auth/auth-utils";
 
@@ -11,7 +12,8 @@ export async function Navbar() {
     : "User";
 
   return (
-    <nav className="flex h-14 items-center justify-end border-b px-4 h-16">
+    <nav className="flex h-16 items-center justify-between sm:justify-end px-4">
+      <AuthAwareSidebarTrigger />
       {currentUser ? (
         <div className="flex items-center gap-2">
           <span

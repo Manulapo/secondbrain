@@ -17,24 +17,26 @@ import {
 } from "lucide-react";
 
 const CALLOUT_STYLES: Record<string, string> = {
-  abstract: "border-sky-500/50 bg-sky-500/30 text-sky-200 dark:sky-700",
-  caution: "border-amber-500/50 bg-amber-500/30 text-amber-200 dark:amber-700",
-  danger: "border-red-500/50 bg-red-500/30 text-red-200 dark:red-700",
+  abstract: "border-sky-500/50 bg-sky-500/30 text-sky-900 dark:text-sky-200",
+  caution:
+    "border-amber-500/50 bg-amber-500/30 text-amber-900 dark:text-amber-200",
+  danger: "border-red-500/50 bg-red-500/30 text-red-900 dark:text-red-200",
   example:
-    "border-purple-500/50 bg-purple-500/30 text-purple-200 dark:purple-700",
-  failure: "border-red-500/50 bg-red-500/30 text-red-200 dark:red-700",
+    "border-purple-500/50 bg-purple-500/30 text-purple-900 dark:text-purple-200",
+  failure: "border-red-500/50 bg-red-500/30 text-red-900 dark:text-red-200",
   important:
-    "border-green-500/50 bg-green-500/30 text-green-200 dark:green-700",
-  info: "border-sky-500/50 bg-sky-500/30 text-sky-200 dark:sky-700",
-  note: "border-sky-500/50 bg-sky-500/30 text-sky-200 dark:sky-700",
+    "border-green-500/50 bg-green-500/30 text-green-900 dark:text-green-200",
+  info: "border-sky-500/50 bg-sky-500/30 text-sky-900 dark:text-sky-200",
+  note: "border-sky-500/50 bg-sky-500/30 text-sky-900 dark:text-sky-200",
   question:
-    "border-violet-500/50 bg-violet-500/30 text-violet-200 dark:violet-700",
+    "border-violet-500/50 bg-violet-500/30 text-violet-900 dark:text-violet-200",
   success:
-    "border-emerald-500/50 bg-emerald-500/30 text-emerald-200 dark:emerald-700",
-  summary: "border-cyan-500/50 bg-cyan-500/30 text-cyan-200 dark:cyan-700",
-  tip: "border-emerald-500/50 bg-emerald-500/30 text-emerald-200 dark:emerald-700",
-  todo: "border-blue-500/50 bg-blue-500/30 text-blue-200 dark:blue-700",
-  warning: "border-amber-500/50 bg-amber-500/30 text-amber-200 dark:amber-700",
+    "border-emerald-500/50 bg-emerald-500/30 text-emerald-900 dark:text-emerald-200",
+  summary: "border-cyan-500/50 bg-cyan-500/30 text-cyan-900 dark:text-cyan-200",
+  tip: "border-emerald-500/50 bg-emerald-500/30 text-emerald-900 dark:text-emerald-200",
+  todo: "border-blue-500/50 bg-blue-500/30 text-blue-900 dark:text-blue-200",
+  warning:
+    "border-amber-500/50 bg-amber-500/30 text-amber-900 dark:text-amber-200",
 };
 
 const CALLOUT_ICONS: Record<string, ReactNode> = {

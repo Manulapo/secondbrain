@@ -5,9 +5,7 @@ import { requireAdmin } from "@/lib/auth/auth-utils";
 
 export async function getNotes() {
   return db.orm.public.Note.where((note) => note.publishedAt.isNotNull())
-    .include("folder", (folder) =>
-      folder.where((folder) => folder.publishedAt.isNotNull()),
-    )
+    .include("folder")
     .orderBy((note) => note.createdAt.desc())
     .all();
 }
@@ -22,9 +20,7 @@ export async function getExplorerNotes() {
 export async function getNoteBySlug(slug: string) {
   return db.orm.public.Note.where({ slug })
     .where((note) => note.publishedAt.isNotNull())
-    .include("folder", (folder) =>
-      folder.where((folder) => folder.publishedAt.isNotNull()),
-    )
+    .include("folder")
     .first();
 }
 

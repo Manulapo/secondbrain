@@ -43,7 +43,7 @@ import {
 } from "./file-explorer-sidebar-forms";
 import { ExplorerFolderRow } from "./file-explorer-sidebar-folder";
 import { ExplorerNoteRow } from "./file-explorer-sidebar-note";
-import { cn } from "cn";
+import Link from "next/link";
 
 export function FileExplorerSidebar({
   folderTree,
@@ -167,6 +167,7 @@ export function FileExplorerSidebar({
       await deleteFolder(formData);
       setDeletingFolder(null);
       toast.success("Folder deleted.");
+      router.replace("/");
       router.refresh();
     } catch (error) {
       toast.error(getActionErrorMessage(error));
@@ -184,6 +185,7 @@ export function FileExplorerSidebar({
       await deleteNote(formData);
       setDeletingNote(null);
       toast.success("Note deleted.");
+      router.replace("/");
       router.refresh();
     } catch (error) {
       toast.error(getActionErrorMessage(error));
@@ -237,7 +239,9 @@ export function FileExplorerSidebar({
         isAdmin={isAdmin}
         isExpanded={expanded.has(folder.id)}
         hasExpandedFolder={expanded.size > 0}
-        isSelected={folderSlug === folder.slug}
+        isSelected={
+          folderSlug === folder.slug || noteSlug === `moc-${folder.slug}`
+        }
         noteSlug={noteSlug}
         renamingFolder={renamingFolder}
         renamingNote={renamingNote}
@@ -304,10 +308,9 @@ export function FileExplorerSidebar({
       <Sidebar collapsible="icon" className={className}>
         <SidebarHeader className="h-16 justify-center border-b px-4 group-data-[collapsible=icon]:px-0">
           <div className="flex items-center justify-between gap-3 group-data-[collapsible=icon]:justify-center">
-            <AppIcon
-              aria-label={appConfig.name}
-              className="h-6 w-6"
-            />
+            <Link href="/">
+              <AppIcon aria-label={appConfig.name} className="h-6 w-6" />
+            </Link>
             {isAdmin ? (
               <div className="flex items-center gap-1 group-data-[collapsible=icon]:hidden">
                 <Tooltip>

@@ -5,7 +5,7 @@ import { requireAdmin } from "../auth/auth-utils";
 
 export async function getFolders() {
   return await db.orm.public.Folder.where((folder) =>
-    folder.publishedAt.isNotNull(),
+    folder.notes.some((note) => note.publishedAt.isNotNull()),
   )
     .include("notes", (notes) =>
       notes
@@ -17,7 +17,9 @@ export async function getFolders() {
 }
 
 export async function getExplorerFolders() {
-  return db.orm.public.Folder.where((folder) => folder.publishedAt.isNotNull())
+  return db.orm.public.Folder.where((folder) =>
+    folder.notes.some((note) => note.publishedAt.isNotNull()),
+  )
     .select("id", "name", "slug", "parentFolderId")
     .include("notes", (notes) =>
       notes
@@ -44,7 +46,6 @@ export async function getAdminExplorerFolders() {
 
 export async function getFolderBySlug(slug: string) {
   return await db.orm.public.Folder.where({ slug })
-    .where((folder) => folder.publishedAt.isNotNull())
     .where((folder) =>
       folder.notes.some((note) => note.publishedAt.isNotNull()),
     )
@@ -56,16 +57,13 @@ export async function getFolderBySlug(slug: string) {
           .orderBy((note) => note.title.asc()), // alphabetical order
     )
     .include("parent", (parentFolder) =>
-      parentFolder
-        .where((parent) => parent.publishedAt.isNotNull())
-        .where((parent) =>
-          parent.notes.some((note) => note.publishedAt.isNotNull()),
-        ),
+      parentFolder.where((parent) =>
+        parent.notes.some((note) => note.publishedAt.isNotNull()),
+      ),
     )
     .include("children", (subFolders) =>
       // include children folders and their notes
       subFolders
-        .where((subfolder) => subfolder.publishedAt.isNotNull())
         .where((subFolder) =>
           subFolder.notes.some((note) => note.publishedAt.isNotNull()),
         )

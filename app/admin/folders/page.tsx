@@ -1,5 +1,6 @@
 import { getAdminFolders } from "@/lib/folders/queries";
 import { FolderCreateForm } from "@/components/admin/folder-create-form";
+import { PageLayout } from "@/components/page-layout";
 
 import { FolderRow } from "./folder-row";
 
@@ -7,7 +8,7 @@ export default async function AdminFoldersPage() {
   const folders = await getAdminFolders();
 
   return (
-    <div className="min-h-screen bg-background px-6 py-12 text-foreground sm:px-8">
+    <PageLayout>
       <div className="space-y-10">
         <header className="space-y-2">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground">
@@ -52,6 +53,6 @@ export default async function AdminFoldersPage() {
           )}
         </section>
       </div>
-    </div>
+    </PageLayout>
   );
 }

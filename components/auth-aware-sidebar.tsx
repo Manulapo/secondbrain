@@ -21,9 +21,5 @@ export function AuthAwareSidebarTrigger() {
 
   if (isAuthPage(pathname)) return null;
 
-  return (
-    <div className="border-b p-2 md:hidden">
-      <SidebarTrigger />
-    </div>
-  );
+  return <SidebarTrigger className="md:hidden" />;
 }

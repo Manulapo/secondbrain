@@ -13,6 +13,6 @@ export function slugify(name: string) {
   );
 }
 
-export function isMocNote(title: string) {
+export function isMOCNote(title: string) {
   return /^\d+\s*-\s*MOC\s*-/i.test(title);
 }

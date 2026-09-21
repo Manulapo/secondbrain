@@ -3,7 +3,7 @@ import {
   getExplorerFolders,
 } from "@/lib/folders/queries";
 import { getAdminExplorerNotes, getExplorerNotes } from "@/lib/notes/queries";
-import { isMocNote } from "@/lib/utils";
+import { isMOCNote } from "@/lib/utils";
 import { ExplorerFolder } from "@/types/folder.types";
 import { ExplorerNote } from "@/types/notes.types";
 import { FileExplorerSidebar } from "./file-explorer-sidebar";
@@ -27,7 +27,7 @@ export async function FileExplorerSidebarServer() {
       slug: folder.slug,
       children: [],
       notes: folder.notes
-        .filter((note) => !isMocNote(note.title))
+        .filter((note) => !isMOCNote(note.title))
         .map((note) => ({
           id: String(note.id),
           title: note.title,
@@ -66,7 +66,7 @@ export async function FileExplorerSidebarServer() {
       isAdmin={isAdmin}
       folderTree={roots}
       unfiledNotes={unfiledNotes}
-      className="rounded-2xl overflow-hidden h-[98vh] mt-[1vh] ml-[0.5vw] shadow-lg backdrop-blur supports-[backdrop-filter]:bg-card/80"
+      className="rounded-2xl overflow-hidden h-[98vh] mt-[1vh] ml-[0.5vw] shadow-lg dark:shadow-black/20  backdrop-blur supports-[backdrop-filter]:bg-card/40"
     />
   );
 }

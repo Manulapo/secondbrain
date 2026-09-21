@@ -19,9 +19,7 @@ export function MermaidDiagram({ code }: { code: string }) {
       themeVariables: {
         primaryColor: "#3b2155",
         primaryTextColor: "#ffffff",
-        primaryBorderColor: "#000000",
-        lineColor: "#777777",
-        textColor: "#56238a",
+        primaryBorderColor: "#9999",
       },
 
       themeCSS: `
@@ -80,7 +78,7 @@ export function MermaidDiagram({ code }: { code: string }) {
 
   return (
     <div
-      className="flex justify-center overflow-x-auto p-4 [&>svg]:max-w-full"
+      className="flex justify-center overflow-x-auto bg-muted/20 p-4 [&>svg]:max-w-full"
       dangerouslySetInnerHTML={{ __html: svg }}
     />
   );

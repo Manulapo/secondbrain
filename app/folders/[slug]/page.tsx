@@ -3,9 +3,10 @@ import { notFound } from "next/navigation";
 
 import { MarkdownRenderer } from "@/components/markdown/markdown-renderer";
 import { getFolderBySlug } from "@/lib/folders/queries";
-import { isMocNote } from "@/lib/utils";
+import { isMOCNote } from "@/lib/utils";
 import { cn } from "cn";
 import { FileText } from "lucide-react";
+import { PageLayout } from "@/components/page-layout";
 
 export default async function FolderPage({
   params,
@@ -20,11 +21,11 @@ export default async function FolderPage({
     notFound();
   }
 
-  const moc = folder.notes.find((note) => isMocNote(note.title));
-  const notes = folder.notes.filter((note) => !isMocNote(note.title));
+  const moc = folder.notes.find((note) => isMOCNote(note.title));
+  const notes = folder.notes.filter((note) => !isMOCNote(note.title));
 
   return (
-    <main className="min-h-screen bg-background px-6 py-12 text-foreground sm:px-8">
+    <PageLayout>
       <div>
         <header className="border-b border-border pb-8">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground">
@@ -74,6 +75,6 @@ export default async function FolderPage({
           ) : null}
         </div>
       </div>
-    </main>
+    </PageLayout>
   );
 }
