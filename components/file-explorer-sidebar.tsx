@@ -339,11 +339,7 @@ export function FileExplorerSidebar({
                     onSubmit={handleRenameNote}
                   >
                     <input name="slug" type="hidden" value={note.slug} />
-                    <input
-                      name="content"
-                      type="hidden"
-                      value={note.content}
-                    />
+                    <input name="content" type="hidden" value={note.content} />
                     <input
                       name="folderId"
                       type="hidden"
@@ -386,10 +382,15 @@ export function FileExplorerSidebar({
                       className="text-foreground/80"
                       render={<Link href={`/notes/${note.slug}`} />}
                     >
-                      <FileText className="ml-3 opacity-60"/>
-                      <span className={cn({
-                        "text-foreground font-semibold": noteSlug === note.slug,
-                      })}>{note.title}</span>
+                      <FileText className="ml-3 opacity-60" />
+                      <span
+                        className={cn({
+                          "text-foreground font-semibold":
+                            noteSlug === note.slug,
+                        })}
+                      >
+                        {note.title}
+                      </span>
                     </SidebarMenuSubButton>
                     <ItemActions
                       name={note.title}
@@ -526,7 +527,9 @@ export function FileExplorerSidebar({
                         onBlur={() => {
                           if (!newNoteTitle.trim()) setCreatingNote(false);
                         }}
-                        onChange={(event) => setNewNoteTitle(event.target.value)}
+                        onChange={(event) =>
+                          setNewNoteTitle(event.target.value)
+                        }
                         onKeyDown={(event) => {
                           if (event.key === "Escape") {
                             event.preventDefault();

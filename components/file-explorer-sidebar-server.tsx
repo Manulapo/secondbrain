@@ -28,7 +28,10 @@ export async function FileExplorerSidebarServer() {
           folderId: String(folder.id),
           content: "",
           published: true,
-        })).sort((a, b) => a.title.localeCompare(b.title, undefined, { numeric: true })),
+        }))
+        .sort((a, b) =>
+          a.title.localeCompare(b.title, undefined, { numeric: true }),
+        ),
     });
   }
 

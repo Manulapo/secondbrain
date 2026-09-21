@@ -4,7 +4,6 @@ import { FolderValidationResult } from "@/types/folder.types";
 export function validateFolderName(
   value: FormDataEntryValue | null,
 ): FolderValidationResult {
-
   if (typeof value !== "string") {
     return {
       success: false,

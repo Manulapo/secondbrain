@@ -1,16 +1,16 @@
 export type NoteValidationResult =
   | {
-    success: true;
-    data: {
-      title: string;
-      slug: string;
-      content: string;
-    };
-  }
+      success: true;
+      data: {
+        title: string;
+        slug: string;
+        content: string;
+      };
+    }
   | {
-    success: false;
-    error: string;
-  };
+      success: false;
+      error: string;
+    };
 
 export type ExplorerNote = {
   id: string;

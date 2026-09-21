@@ -46,9 +46,9 @@ export async function updateFolder(formData: FormData) {
 
   const { name, slug: newSlug } = result.data;
 
-  const folder = await db.orm.public.Folder
-    .where({ slug: originalSlug })
-    .first();
+  const folder = await db.orm.public.Folder.where({
+    slug: originalSlug,
+  }).first();
 
   if (!folder) {
     throw new Error("Folder does not exist.");
@@ -56,21 +56,19 @@ export async function updateFolder(formData: FormData) {
 
   // if the slug changed, make sure another folder doesn't already use it
   if (newSlug !== originalSlug) {
-    const conflictingFolder = await db.orm.public.Folder
-      .where({ slug: newSlug })
-      .first();
+    const conflictingFolder = await db.orm.public.Folder.where({
+      slug: newSlug,
+    }).first();
 
     if (conflictingFolder) {
       throw new Error("A folder with that name already exists.");
     }
   }
 
-  await db.orm.public.Folder
-    .where({ id: folder.id })
-    .update({
-      name,
-      slug: newSlug,
-    });
+  await db.orm.public.Folder.where({ id: folder.id }).update({
+    name,
+    slug: newSlug,
+  });
 
   revalidatePath("/admin/folders");
   revalidatePath("/", "layout");

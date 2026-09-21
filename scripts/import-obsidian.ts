@@ -182,7 +182,6 @@ async function main() {
     console.log("No note conflicts found.\n");
 
     await importNotes(notes, folderIds);
-
   } finally {
     await database.close();
   }
@@ -367,9 +366,9 @@ async function validateNotesAgainstDatabase(
   notes: ImportedNote[],
 ): Promise<void> {
   for (const note of notes) {
-    const existingNote = await db.orm.public.Note
-      .where({ slug: note.slug })
-      .first();
+    const existingNote = await db.orm.public.Note.where({
+      slug: note.slug,
+    }).first();
 
     if (!existingNote) {
       continue;
@@ -392,9 +391,7 @@ async function importNotes(
 
   for (const note of notes) {
     if (note.folderPath === null) {
-      throw new Error(
-        `Cannot import note without folder: ${note.sourcePath}`,
-      );
+      throw new Error(`Cannot import note without folder: ${note.sourcePath}`);
     }
 
     const folderId = folderIds.get(note.folderPath);
@@ -405,26 +402,15 @@ async function importNotes(
       );
     }
 
-    const result = validateNote(
-      note.title,
-      note.content,
-    );
+    const result = validateNote(note.title, note.content);
 
     if (!result.success) {
-      throw new Error(
-        `Invalid note "${note.sourcePath}": ${result.error}`,
-      );
+      throw new Error(`Invalid note "${note.sourcePath}": ${result.error}`);
     }
 
-    const {
-      title,
-      slug,
-      content,
-    } = result.data;
+    const { title, slug, content } = result.data;
 
-    const existingNote = await db.orm.public.Note
-      .where({ slug })
-      .first();
+    const existingNote = await db.orm.public.Note.where({ slug }).first();
 
     if (existingNote) {
       console.log(`Reusing note: ${title}`);

@@ -51,7 +51,9 @@ export function ThemeToggle() {
             <Monitor />
           )}
         </TooltipTrigger>
-        <TooltipContent side="left">Theme: {mounted ? theme : "system"}</TooltipContent>
+        <TooltipContent side="left">
+          Theme: {mounted ? theme : "system"}
+        </TooltipContent>
       </Tooltip>
       <DropdownMenuContent align="end" side="top">
         <DropdownMenuRadioGroup

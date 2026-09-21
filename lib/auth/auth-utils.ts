@@ -21,9 +21,7 @@ export async function getCurrentUser() {
     return null;
   }
 
-  const user = await db.orm.public.User
-    .where({ id: userId })
-    .first();
+  const user = await db.orm.public.User.where({ id: userId }).first();
 
   return user ?? null;
 }

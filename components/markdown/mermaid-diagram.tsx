@@ -11,20 +11,20 @@ export function MermaidDiagram({ code }: { code: string }) {
   useEffect(() => {
     let cancelled = false;
 
-     mermaid.initialize({
-    startOnLoad: false,
-    securityLevel: "strict",
-    theme: "base",
+    mermaid.initialize({
+      startOnLoad: false,
+      securityLevel: "strict",
+      theme: "base",
 
-    themeVariables: {
-      primaryColor: "#3b2155",
-      primaryTextColor: "#ffffff",
-      primaryBorderColor: "#000000",
-      lineColor: "#777777",
-      textColor: "#56238a",
-    },
+      themeVariables: {
+        primaryColor: "#3b2155",
+        primaryTextColor: "#ffffff",
+        primaryBorderColor: "#000000",
+        lineColor: "#777777",
+        textColor: "#56238a",
+      },
 
-    themeCSS: `
+      themeCSS: `
       /* Remove shadows */
       .node,
       .node rect,
