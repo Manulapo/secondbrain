@@ -1,18 +1,13 @@
-import Link from "next/link";
-import { redirect } from "next/navigation";
 import { ArrowUpRight, FileText, FolderOpen } from "lucide-react";
+import Link from "next/link";
 
+import { PageLayout } from "@/components/page-layout";
 import { getFolders } from "@/lib/folders/queries";
 import { getNotes } from "@/lib/notes/queries";
 import { isMOCNote } from "@/lib/utils";
-import { PageLayout } from "@/components/page-layout";
 
 export default async function Home() {
   const [folders, notes] = await Promise.all([getFolders(), getNotes()]);
-
-  if (folders.length === 0 && notes.length === 0) {
-    redirect("/login");
-  }
 
   const visibleNotes = notes.filter((note) => !isMOCNote(note.title));
   const recentNotes = visibleNotes.slice(0, 6);
