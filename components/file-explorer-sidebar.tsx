@@ -10,7 +10,7 @@ import {
   MoreHorizontal,
 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -56,6 +56,7 @@ import {
 import { ExplorerFolder } from "@/types/folder.types";
 import { getActionErrorMessage } from "@/lib/action-error";
 import { ExplorerNote } from "@/types/notes.types";
+import { cn } from "cn";
 
 function ItemActions({
   name,
@@ -146,6 +147,8 @@ export function FileExplorerSidebar({
     slug: string;
   } | null>(null);
   const [deleting, setDeleting] = useState(false);
+
+  const pathname = usePathname();
 
   function toggleFolder(id: string) {
     setExpanded((current) => {
@@ -247,15 +250,18 @@ export function FileExplorerSidebar({
   }
 
   function renderFolder(folder: ExplorerFolder) {
+    //check param in url
     const isExpanded = expanded.has(folder.id);
+    const shouldDim = expanded.size > 0 && !isExpanded;
     const hasContents = Boolean(folder.children.length || folder.notes.length);
     const isRenaming = renamingFolder?.id === folder.id;
+    const noteSlug = pathname.split("/")[2];
 
     return (
       <SidebarMenuItem key={folder.id}>
         <button
           aria-label={`${isExpanded ? "Collapse" : "Expand"} ${folder.name}`}
-          className="absolute left-1 top-1.5 z-10 flex size-7 items-center justify-center rounded-md text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground disabled:opacity-30"
+          className="absolute left-1 z-10 flex size-7 items-center justify-center rounded-md text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground disabled:opacity-30"
           disabled={!hasContents}
           onClick={() => toggleFolder(folder.id)}
           type="button"
@@ -297,7 +303,8 @@ export function FileExplorerSidebar({
         ) : (
           <>
             <SidebarMenuButton
-              className="pl-8"
+              className={`pl-8 ${shouldDim ? "opacity-50" : ""}`}
+              isActive={isExpanded}
               render={<Link href={`/folders/${folder.slug}`} />}
             >
               <Folder />
@@ -379,8 +386,10 @@ export function FileExplorerSidebar({
                       className="text-foreground/80"
                       render={<Link href={`/notes/${note.slug}`} />}
                     >
-                      <FileText className="ml-3 opacity-60" />
-                      <span>{note.title}</span>
+                      <FileText className="ml-3 opacity-60"/>
+                      <span className={cn({
+                        "text-foreground font-semibold": noteSlug === note.slug,
+                      })}>{note.title}</span>
                     </SidebarMenuSubButton>
                     <ItemActions
                       name={note.title}
