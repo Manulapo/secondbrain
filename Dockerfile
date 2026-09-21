@@ -11,7 +11,7 @@ WORKDIR /app
 
 COPY package.json package-lock.json ./
 
-RUN npm ci
+RUN npm ci --legacy-peer-deps
 
 
 # ------------------------------
@@ -35,6 +35,14 @@ FROM tooling AS builder
 ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN mkdir -p public
+
+ARG DATABASE_URL
+ARG BETTER_AUTH_SECRET
+ARG BETTER_AUTH_URL
+
+ENV DATABASE_URL=${DATABASE_URL}
+ENV BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
+ENV BETTER_AUTH_URL=${BETTER_AUTH_URL}
 
 RUN npm run build
 

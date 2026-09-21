@@ -3,16 +3,22 @@ services:
     build:
       context: .
       target: runner
+      args:
+        DATABASE_URL: ${DATABASE_URL}
+        BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+        BETTER_AUTH_URL: ${BETTER_AUTH_URL}
 
     image: secondbrain:latest
     container_name: secondbrain
-
     restart: unless-stopped
-
     network_mode: host
 
     env_file:
       - /etc/secondbrain/secondbrain.env
+
+    environment:
+      PORT: "3001"
+      HOSTNAME: "127.0.0.1"
 
     init: true
 
